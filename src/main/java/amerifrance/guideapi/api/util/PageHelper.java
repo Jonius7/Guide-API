@@ -2,7 +2,7 @@ package amerifrance.guideapi.api.util;
 
 import amerifrance.guideapi.api.abstraction.IPage;
 import amerifrance.guideapi.pages.PageLocItemStack;
-import amerifrance.guideapi.pages.PageLocText;
+import amerifrance.guideapi.pages.PageText;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.Item;
@@ -14,10 +14,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PageHelper {
+	
+	// Number of characters per page
+	private static int textLength = 320;
+	private static int shortTextLength = 205;
 
     public static List<IPage> pagesForLongText(String locText, int maxLength) {
         List<IPage> pageList = new ArrayList<IPage>();
-        for (String s : WordUtils.wrap(locText, maxLength, "/cut", false).split("/cut")) pageList.add(new PageLocText(s));
+        for (String s : WordUtils.wrap(
+        		locText, maxLength, "/cut", false)
+        		.split("/cut")) {
+        	pageList.add(new PageText(s));
+        }
         return pageList;
     }
 
@@ -26,15 +34,31 @@ public class PageHelper {
      * @return a list of IPages with the text cut to fit on page
      */
     public static List<IPage> pagesForLongText(String locText) {
-        return pagesForLongText(locText, 450);
+        return pagesForLongText(locText, PageHelper.textLength);
     }
 
     public static List<IPage> pagesForLongText(String locText, ItemStack stack) {
         List<IPage> pageList = new ArrayList<IPage>();
-        String[] strings = WordUtils.wrap(locText, 450, "/cut", false).split("/cut");
-        for (int i = 0; i < strings.length; i++) {
-            if (i == 0) pageList.add(new PageLocItemStack(strings[i], stack));
-            else pageList.add(new PageLocText(strings[i]));
+        ArrayList<String> strings = new ArrayList<String>();
+        if (locText.length() > 205) {
+	        // First page has an Item, so we use 205 characters instead of 320 for the first page
+	        String firstPageText = (locText.substring(0, PageHelper.shortTextLength));
+	        String[] restOfPagesText = WordUtils.wrap(
+	        		(locText.substring(
+	        				PageHelper.shortTextLength, locText.length())),
+	        				PageHelper.textLength, "/cut", false)
+	        		.split("/cut");
+	        strings.add(firstPageText);
+	        for(String s : restOfPagesText) {
+	        	strings.add(s);
+	        }
+	        
+        } else {
+        	strings.add(locText);
+        }
+        for (int i = 0; i < strings.size(); i++) {
+            if (i == 0) pageList.add(new PageLocItemStack(strings.get(i), stack));
+            else pageList.add(new PageText(strings.get(i)));
         }
         return pageList;
     }
@@ -76,7 +100,7 @@ public class PageHelper {
     public static List<IPage> pagesForLongText(String locText, FontRenderer fontRenderer) {
         List<IPage> pageList = new ArrayList<IPage>();
         List<String> stringList = fontRenderer.listFormattedStringToWidth(locText, 2250);
-        for (String s : stringList) pageList.add(new PageLocText(s));
+        for (String s : stringList) pageList.add(new PageText(s));
         return pageList;
     }
 
@@ -86,7 +110,7 @@ public class PageHelper {
         List<String> stringList = fontRenderer.listFormattedStringToWidth(locText, 2250);
         for (int i = 0; i < stringList.size(); i++) {
             if (i == 0) pageList.add(new PageLocItemStack(stringList.get(i), stack));
-            else pageList.add(new PageLocText(stringList.get(i)));
+            else pageList.add(new PageText(stringList.get(i)));
         }
         return pageList;
     }

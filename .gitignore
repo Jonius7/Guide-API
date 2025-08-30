@@ -9,6 +9,7 @@
 /asm/*
 /bin/*
 /lib/*
+/.settings/*
 
 #File Extensions
 *.psd
@@ -17,6 +18,7 @@
 *.iws
 *.classpath
 *.project
+*.bat
 
 #Specific files
 curse.gradle
