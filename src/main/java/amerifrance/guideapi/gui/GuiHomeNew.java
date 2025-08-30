@@ -11,10 +11,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 import java.awt.*;
+import java.util.List;
 
 public class GuiHomeNew extends GuiHome {
 
-    public GuiHomeNew(Book book, EntityPlayer player, ItemStack bookStack) {
+    private List listFormattedStringToWidth;
+
+	public GuiHomeNew(Book book, EntityPlayer player, ItemStack bookStack) {
         super(book, player, bookStack);
     }
 
@@ -31,7 +34,7 @@ public class GuiHomeNew extends GuiHome {
         this.buttonList.add(buttonPrev = new ButtonPrev(1, guiLeft + xSize / 5, guiTop + 5 * ySize / 6, this));
 
         int cX = guiLeft + 45;
-        int cY = guiTop + 40;
+        int cY = guiTop + 20;
         int drawLoc = 0;
         int i = 0;
         int pageNumber = 0;
@@ -82,8 +85,15 @@ public class GuiHomeNew extends GuiHome {
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
         Minecraft.getMinecraft().getTextureManager().bindTexture(outlineTexture);
         drawTexturedModalRectWithColor(guiLeft, guiTop, 0, 0, xSize, ySize, book.bookColor);
-        drawCenteredString(fontRendererObj, book.getLocalizedWelcomeMessage().replace("\\n", "\n").replace("&", "\u00a7"), guiLeft + xSize / 2 + 1, guiTop + 15, 0);
-
+        setWelcomeMessageStringList(fontRendererObj.listFormattedStringToWidth(book.getLocalizedWelcomeMessage().replace("\\n", "\n").replace("&", "\u00a7"), 125));
+		List<String> lines = getWelcomeMessageStringList();
+        int yStart = guiTop + 75;
+		for (int i = 0; i < lines.size(); i++) {
+			String line = lines.get(i);
+			int y = yStart + i * fontRendererObj.FONT_HEIGHT;
+			drawCenteredString(fontRendererObj, line, guiLeft + xSize / 2 + 1, y, 0);
+		}
+        
         for (CategoryWrapper wrapper : this.categoryWrapperMap.get(categoryPage))
             if (wrapper.canPlayerSee())
                 wrapper.draw(mouseX, mouseY, this);
@@ -101,4 +111,12 @@ public class GuiHomeNew extends GuiHome {
         for (Object button : this.buttonList)
             ((GuiButton) button).drawButton(this.mc, mouseX, mouseY);
     }
+
+	public List getWelcomeMessageStringList() {
+		return listFormattedStringToWidth;
+	}
+
+	public void setWelcomeMessageStringList(List listFormattedStringToWidth) {
+		this.listFormattedStringToWidth = listFormattedStringToWidth;
+	}
 }

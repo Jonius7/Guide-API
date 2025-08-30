@@ -14,6 +14,7 @@ The ones we know of at least
 * [Sanguimancy](http://minecraft.curseforge.com/mc-mods/223722-sanguimancy)
 * [Creative Concoctions](https://github.com/TeamAmeriFrance/CreativeConcoctions)
 * [Blood Magic](http://minecraft.curseforge.com/mc-mods/224791-blood-magic) (*In progress*)
+* [Vampirism](https://www.curseforge.com/minecraft/mc-mods/vampirism-become-a-vampire)
 
 ##Issue Reporting
 
